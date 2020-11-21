@@ -16,11 +16,11 @@ namespace IoT_SmartPlant_Portal.Services {
             string BrokerAddress = "mqtt.flespi.io";
 
             client = new MqttClient(BrokerAddress,
-                                                8883,
-                                                true,
-                                                new X509Certificate("C:\\Users\\Fabio\\Documents\\GitHub\\Iot-smartPlant-Portal\\IoT-SmartPlant-Portal\\Certificates\\server.cer"),
-                                                new X509Certificate("C:\\Users\\Fabio\\Documents\\GitHub\\Iot-smartPlant-Portal\\IoT-SmartPlant-Portal\\Certificates\\client.cer"),
-                                                MqttSslProtocols.TLSv1_1);
+                                    8883,
+                                    true,
+                                    new X509Certificate("C:\\Users\\Fabio\\Documents\\GitHub\\Iot-smartPlant-Portal\\IoT-SmartPlant-Portal\\Certificates\\server.cer"),
+                                    new X509Certificate("C:\\Users\\Fabio\\Documents\\GitHub\\Iot-smartPlant-Portal\\IoT-SmartPlant-Portal\\Certificates\\client.cer"),
+                                    MqttSslProtocols.TLSv1_1);
 
             var clientId = Guid.NewGuid().ToString();
             client.Connect(clientId, "FlespiToken pUgcWLHBBPPcrVYPwXB8tXC8L4fTZAFejJg5lLxKoaMFWyjglIeEvEB7wEOl4jpd", "");
