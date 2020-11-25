@@ -52,9 +52,14 @@ namespace IoT_SmartPlant_Portal.Services {
         static void client_MqttMsgPublishReceived(
             object sender, MqttMsgPublishEventArgs e) {
             // handle message received
-            string jsonString = JsonConvert.SerializeObject(e.Message.ToString());
-            _plant = JsonConvert.DeserializeObject<Plant>(jsonString);
-            _influx.WritePoint(_plant);
+            var test = e.Message.ToString();
+            Console.WriteLine(test);
+            if (e.Message.Length() != 0)
+            {
+                _plant = JsonConvert.DeserializeObject<Plant>(e.Message.ToString());
+                _influx.WritePoint(_plant);
+            }
+            
             //Console.WriteLine("message=" + Encoding.UTF8.GetString(e.Message));
         }
 

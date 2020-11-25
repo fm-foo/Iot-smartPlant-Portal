@@ -26,7 +26,7 @@ namespace IoT_SmartPlant_Portal.Services
         public PointData ConvertToInflux(Plant plant)
         {
                 var point = PointData.Measurement("Plant")
-                .Tag("PlantType", "Firn")
+                .Tag("PlantType", "Fern")
 
                 .Field("Temperature", plant.TemperatureC)
                 .Field("Soil Humidity", plant.SoilHumidity)
