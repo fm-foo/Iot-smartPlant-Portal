@@ -8,7 +8,8 @@ using uPLibrary.Networking.M2Mqtt.Messages;
 
 namespace IoT_SmartPlant_Portal.Services {
     public class Subscriber {
-        InfluxSubscriber _inglux;
+        static InfluxSubscriber _influx;
+        static Plant _plant;
         MqttClient client;
         public Subscriber() {
             InitialSetup();
@@ -51,9 +52,10 @@ namespace IoT_SmartPlant_Portal.Services {
         static void client_MqttMsgPublishReceived(
             object sender, MqttMsgPublishEventArgs e) {
             // handle message received
-            object plant = JsonConvert.DeserializeObject(e.Message.ToString());
-            _inglux.WritePoint(plant);
-            Console.WriteLine("message=" + Encoding.UTF8.GetString(e.Message));
+            string jsonString = JsonConvert.SerializeObject(e.Message.ToString());
+            _plant = JsonConvert.DeserializeObject<Plant>(jsonString);
+            _influx.WritePoint(_plant);
+            //Console.WriteLine("message=" + Encoding.UTF8.GetString(e.Message));
         }
 
         void client_MqttMsgSubscribed(object sender, MqttMsgSubscribedEventArgs e) {

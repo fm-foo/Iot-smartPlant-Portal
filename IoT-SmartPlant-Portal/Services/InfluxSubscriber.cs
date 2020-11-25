@@ -23,22 +23,21 @@ namespace IoT_SmartPlant_Portal.Services
         public string Password = "admin";
         public string DatabaseName = "test";
 
-        public PointData ConvertToInflux(object plant)
+        public PointData ConvertToInflux(Plant plant)
         {
                 var point = PointData.Measurement("Plant")
-                .Tag("PlantType", )
+                .Tag("PlantType", "Firn")
 
-                .Field("Temperatur", plant)
-                .Field("MoistureLevel", plant)
-                .Field("Humidity Level", plant)
-                .Field("Water Level", plant.)
+                .Field("Temperature", plant.TemperatureC)
+                .Field("Soil Humidity", plant.SoilHumidity)
+                .Field("Humidity Level", plant.Humidity)
 
                 .Timestamp(DateTime.UtcNow, WritePrecision.S);
 
                 return point;
         }
 
-        public void WritePoint(object plant)
+        public void WritePoint(Plant plant)
         {
             var influxDBClient = InfluxDBClientFactory.Create(HostName, UserName, Password.ToCharArray());
             PointData convertedMessage = ConvertToInflux(plant);
