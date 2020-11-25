@@ -1,15 +1,13 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Diagnostics;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using uPLibrary.Networking.M2Mqtt;
 using uPLibrary.Networking.M2Mqtt.Messages;
 
 namespace IoT_SmartPlant_Portal.Services {
     public class Subscriber {
-        static InfluxSubscriber _influx;
-        static Plant _plant;
+        static InfluxSubscriber _influx = new InfluxSubscriber("165.227.149.153:8086", "admin", "admin", "test");
         MqttClient client;
         public Subscriber() {
             InitialSetup();
@@ -21,8 +19,8 @@ namespace IoT_SmartPlant_Portal.Services {
             client = new MqttClient(BrokerAddress,
                                     8883,
                                     true,
-                                    new X509Certificate("C:\\Users\\nicol\\OneDrive\\Skrivebord\\Iot-smartPlant-Portal\\IoT-SmartPlant-Portal\\Certificates\\server.cer"),
-                                    new X509Certificate("C:\\Users\\nicol\\OneDrive\\Skrivebord\\Iot-smartPlant-Portal\\IoT-SmartPlant-Portal\\Certificates\\client.cer"),
+                                    null,
+                                    null,
                                     MqttSslProtocols.TLSv1_1);
 
             var clientId = Guid.NewGuid().ToString();
@@ -52,15 +50,10 @@ namespace IoT_SmartPlant_Portal.Services {
         static void client_MqttMsgPublishReceived(
             object sender, MqttMsgPublishEventArgs e) {
             // handle message received
-            var test = e.Message.ToString();
-            Console.WriteLine(test);
-            if (e.Message.Length() != 0)
-            {
-                _plant = JsonConvert.DeserializeObject<Plant>(e.Message.ToString());
-                _influx.WritePoint(_plant);
-            }
-            
-            //Console.WriteLine("message=" + Encoding.UTF8.GetString(e.Message));
+            string valuesFromBroker = Encoding.UTF8.GetString(e.Message);
+            Plant _plant = JsonConvert.DeserializeObject<Plant>(valuesFromBroker);
+            _influx.WritePoint(_plant);
+
         }
 
         void client_MqttMsgSubscribed(object sender, MqttMsgSubscribedEventArgs e) {
