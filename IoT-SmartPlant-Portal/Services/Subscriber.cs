@@ -7,7 +7,7 @@ using uPLibrary.Networking.M2Mqtt.Messages;
 
 namespace IoT_SmartPlant_Portal.Services {
     public class Subscriber {
-        static InfluxSubscriber _influx = new InfluxSubscriber("165.227.149.153:8086", "admin", "admin", "test");
+        static InfluxSubscriber _influx = new InfluxSubscriber("http://165.227.149.153:8086", "admin", "admin", "test");
         MqttClient client;
         public Subscriber() {
             InitialSetup();

@@ -28,7 +28,7 @@ namespace IoT_SmartPlant_Portal.Services
                 var point = PointData.Measurement("Plant")
                 .Tag("PlantType", "Fern")
 
-                .Field("Temperature", plant.TemperatureC)
+                .Field("Temperature",  plant.TemperatureC)
                 .Field("Soil Humidity", plant.SoilHumidity)
                 .Field("Humidity Level", plant.Humidity)
 
@@ -39,7 +39,8 @@ namespace IoT_SmartPlant_Portal.Services
 
         public void WritePoint(Plant plant)
         {
-            var influxDBClient = InfluxDBClientFactory.Create(HostName, UserName, Password.ToCharArray());
+
+            InfluxDBClient influxDBClient = InfluxDBClientFactory.Create(HostName, UserName, Password.ToCharArray());
             PointData convertedMessage = ConvertToInflux(plant);
 
             using (var writeApi = influxDBClient.GetWriteApi())
