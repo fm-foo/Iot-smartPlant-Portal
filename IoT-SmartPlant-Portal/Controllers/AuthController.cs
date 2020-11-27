@@ -70,7 +70,7 @@ namespace IoT_SmartPlant_Portal.Controllers
             }
 
             var token = GenerateToken(identityUser);
-            return Ok(new { Token = token, Message = "Success" });
+            return Ok(new { Token = token, Message = "Login Successful" });
         }
 
         [HttpGet]
