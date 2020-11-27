@@ -31,7 +31,7 @@ namespace IoT_SmartPlant_Portal {
 
             services.AddSingleton<Subscriber>();
 
-            services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("SqlConnection")));
+            services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(Configuration.GetConnectionString("SqlConnection")));
 
             services.AddIdentity<IdentityUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
                             .AddEntityFrameworkStores<ApplicationDbContext>();

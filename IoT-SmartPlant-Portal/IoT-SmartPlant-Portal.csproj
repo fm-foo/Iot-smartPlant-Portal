@@ -19,12 +19,15 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.10" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="5.0.0" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL.Design" Version="1.1.0" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Certificates\" />
     <Folder Include="Data\" />
     <Folder Include="Configuration\" />
+    <Folder Include="Migrations\" />
     <Folder Include="Models\" />
   </ItemGroup>
 

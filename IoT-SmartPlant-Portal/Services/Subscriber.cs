@@ -18,8 +18,8 @@ namespace IoT_SmartPlant_Portal.Services {
             client = new MqttClient(BrokerAddress,
                                     8883,
                                     true,
-                                    new X509Certificate("/Users/emil/Downloads/HotelBooking_Clean-master/Iot-smartPlant-Portal/IoT-SmartPlant-Portal/Certificates/server.cer"),
-                                    new X509Certificate("/Users/emil/Downloads/HotelBooking_Clean-master/Iot-smartPlant-Portal/IoT-SmartPlant-Portal/Certificates/client.cer"),
+                                    new X509Certificate("C:\\Users\\pc\\Documents\\GitHub\\Iot-smartPlant-Portal\\IoT-SmartPlant-Portal\\Certificates\\server.cer"),
+                                    new X509Certificate("C:\\Users\\pc\\Documents\\GitHub\\Iot-smartPlant-Portal\\IoT-SmartPlant-Portal\\Certificates\\client.cer"),
                                     MqttSslProtocols.TLSv1_1);
 
             var clientId = Guid.NewGuid().ToString();
