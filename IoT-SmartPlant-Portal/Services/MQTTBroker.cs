@@ -10,10 +10,11 @@ namespace IoT_SmartPlant_Portal.Services {
     public interface IMQTTBroker {
         void Subscribe(string topic);
         void Publish(string topic, string messageBody);
+
     }
 
 
-    public class MQTTBroker {
+    public class MQTTBroker : IMQTTBroker {
         public MqttClient client;
         public LaunchConfiguration launchConfig;
         public string clientId;
@@ -76,6 +77,7 @@ namespace IoT_SmartPlant_Portal.Services {
                        MqttMsgBase.QOS_LEVEL_EXACTLY_ONCE, // QoS level
                        true);
                 }
+
             } catch (Exception ex) {
                 throw ex;
             }
