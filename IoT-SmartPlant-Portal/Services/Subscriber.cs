@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using uPLibrary.Networking.M2Mqtt;
 using uPLibrary.Networking.M2Mqtt.Messages;
@@ -18,8 +17,8 @@ namespace IoT_SmartPlant_Portal.Services {
             client = new MqttClient(BrokerAddress,
                                     8883,
                                     true,
-                                    new X509Certificate("C:\\Users\\Fabio\\Documents\\GitHub\\Iot-smartPlant-Portal\\IoT-SmartPlant-Portal\\Certificates\\server.cer"),
-                                    new X509Certificate("C:\\Users\\Fabio\\Documents\\GitHub\\Iot-smartPlant-Portal\\IoT-SmartPlant-Portal\\Certificates\\client.cer"),
+                                    null,
+                                    null,
                                     MqttSslProtocols.TLSv1_1);
 
             var clientId = Guid.NewGuid().ToString();

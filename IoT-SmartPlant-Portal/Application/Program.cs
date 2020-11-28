@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 
-namespace IoT_SmartPlant_Portal {
+namespace IoT_SmartPlant_Portal.Application {
     public class Program {
         public static void Main(string[] args) {
             CreateHostBuilder(args).Build().Run();

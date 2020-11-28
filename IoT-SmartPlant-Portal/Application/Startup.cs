@@ -1,6 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using API.Application.Builders;
 using IoT_SmartPlant_Portal.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -8,7 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace IoT_SmartPlant_Portal {
+namespace IoT_SmartPlant_Portal.Application {
     public class Startup {
         public Startup(IConfiguration configuration) {
             Configuration = configuration;
@@ -21,6 +19,8 @@ namespace IoT_SmartPlant_Portal {
             services.AddControllers();
 
             services.AddSingleton<Subscriber>();
+
+            services.AddSwaggerSetup();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -34,6 +34,9 @@ namespace IoT_SmartPlant_Portal {
             app.UseRouting();
 
             app.UseAuthorization();
+
+
+            app.AddSwaggerSetup();
 
             app.UseEndpoints(endpoints => {
                 endpoints.MapControllers();
