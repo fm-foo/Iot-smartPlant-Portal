@@ -20,7 +20,7 @@ namespace IoT_SmartPlant_Portal.Services {
         public LaunchConfiguration launchConfig;
         public string clientId;
 
-        static InfluxSubscriber _influx = new InfluxSubscriber("http://165.227.149.153:8086", "admin", "admin", "test");
+        static InfluxDB _influx = new InfluxDB("http://165.227.149.153:8086", "admin", "admin", "test");
 
         public MQTTBroker(LaunchConfiguration launchConfiguration) {
             launchConfig = launchConfiguration;

@@ -1,21 +1,23 @@
 ﻿using InfluxDB.Client;
 using InfluxDB.Client.Api.Domain;
 using InfluxDB.Client.Writes;
+using IoT_SmartPlant_Portal.Application.Configuration;
+using IoT_SmartPlant_Portal.Models;
 using System;
 
 namespace IoT_SmartPlant_Portal.Services {
-    public class InfluxSubscriber {
-        public InfluxSubscriber(string HostName, string UserName, string Password, string DatabaseName) {
-            this.HostName = HostName;
-            this.UserName = UserName;
-            this.Password = Password;
-            this.DatabaseName = DatabaseName;
-        }
 
-        public string HostName = "http://165.227.149.153:8086";
-        public string UserName = "admin";
-        public string Password = "admin";
-        public string DatabaseName = "test";
+    public interface IInflux {
+
+    }
+
+    public class InfluxDB {
+
+        private LaunchConfiguration launchConfig;
+
+        public InfluxDB(LaunchConfiguration launchConfiguration) {
+            launchConfig = launchConfiguration;
+        }
 
         public PointData ConvertToInflux(Plant plant) {
             var point = PointData.Measurement("Fern")
@@ -30,12 +32,11 @@ namespace IoT_SmartPlant_Portal.Services {
 
         public void WritePoint(Plant plant) {
 
-            InfluxDBClient influxDBClient = InfluxDBClientFactory.Create(HostName, UserName, Password.ToCharArray());
+            InfluxDBClient influxDBClient = InfluxDBClientFactory.Create(launchConfig.InfluxConfig.InfluxAddress, launchConfig.InfluxConfig.InfluxUsername, launchConfig.InfluxConfig.InfluxPassword.ToCharArray());
             PointData convertedMessage = ConvertToInflux(plant);
 
             using (var writeApi = influxDBClient.GetWriteApi()) {
-                writeApi.WritePoint(DatabaseName, "org", convertedMessage);
-                //writeApi.WritePoint(convertedMessage);
+                writeApi.WritePoint(launchConfig.InfluxConfig.InfluxDatabase, "org", convertedMessage);
             }
             influxDBClient.Dispose();
         }
