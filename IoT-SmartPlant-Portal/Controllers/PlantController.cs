@@ -13,7 +13,6 @@ namespace IoT_SmartPlant_Portal.Controllers {
 
         [HttpGet]
         public int Get() {
-            MQTTBroker.Subscribe("ESP8266/sensor");
             return 0;
         }
 

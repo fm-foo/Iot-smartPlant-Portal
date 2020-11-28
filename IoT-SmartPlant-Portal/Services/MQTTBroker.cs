@@ -25,6 +25,7 @@ namespace IoT_SmartPlant_Portal.Services {
 
         public MQTTBroker(LaunchConfiguration launchConfiguration) {
             launchConfig = launchConfiguration;
+            Subscribe("ESP8266/sensor");
             influxClient = new InfluxDB(launchConfiguration);
         }
 
@@ -64,11 +65,8 @@ namespace IoT_SmartPlant_Portal.Services {
             try {
                 if (EnsureConnection()) {
                     client.MqttMsgPublishReceived += client_MqttMsgPublishReceived;
-
-                    client.Subscribe(new string[] { "ESP8266/sensor" }, new byte[] { MqttMsgBase.QOS_LEVEL_AT_LEAST_ONCE });
                     client.MqttMsgSubscribed += Client_MqttMsgSubscribed;
-
-                    ushort msgId2 = client.Subscribe(new string[] { "ESP8266/sensor" },
+                    ushort msgId2 = client.Subscribe(new string[] { topic },
                         new byte[] { MqttMsgBase.QOS_LEVEL_EXACTLY_ONCE });
                 }
             } catch (Exception ex) {
