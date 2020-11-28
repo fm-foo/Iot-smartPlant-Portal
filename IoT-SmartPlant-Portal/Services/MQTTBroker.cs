@@ -1,4 +1,6 @@
-﻿using IoT_SmartPlant_Portal.Application.Configuration;
+﻿using InfluxDB.Client;
+using IoT_SmartPlant_Portal.Application.Configuration;
+using IoT_SmartPlant_Portal.Models;
 using Newtonsoft.Json;
 using System;
 using System.Diagnostics;
@@ -14,17 +16,16 @@ namespace IoT_SmartPlant_Portal.Services {
         MqttClient GetMQTTClient();
     }
 
-
     public class MQTTBroker : IMQTTBroker {
         public MqttClient client;
         public LaunchConfiguration launchConfig;
+        public static InfluxDB influxClient;
         public string clientId;
 
-        static InfluxDB _influx = new InfluxDB("http://165.227.149.153:8086", "admin", "admin", "test");
 
         public MQTTBroker(LaunchConfiguration launchConfiguration) {
             launchConfig = launchConfiguration;
-            Subscribe("ESP8266/sensor");
+            influxClient = new InfluxDB(launchConfiguration);
         }
 
         private bool EnsureConnection() {
@@ -96,7 +97,7 @@ namespace IoT_SmartPlant_Portal.Services {
 
             string valuesFromBroker = Encoding.UTF8.GetString(e.Message);
             Plant _plant = JsonConvert.DeserializeObject<Plant>(valuesFromBroker);
-            _influx.WritePoint(_plant);
+            influxClient.WritePoint(_plant);
         }
 
         public void client_MqttMsgSubscribed(object sender, MqttMsgSubscribedEventArgs e) {

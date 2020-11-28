@@ -6,17 +6,22 @@ using IoT_SmartPlant_Portal.Models;
 using System;
 
 namespace IoT_SmartPlant_Portal.Services {
-
-    public interface IInflux {
-
-    }
-
     public class InfluxDB {
 
         private LaunchConfiguration launchConfig;
+        public InfluxDBClient influxDBClient { get; set; }
+
 
         public InfluxDB(LaunchConfiguration launchConfiguration) {
             launchConfig = launchConfiguration;
+            ConnectInflux();
+
+        }
+
+        public void ConnectInflux() {
+            influxDBClient = InfluxDBClientFactory.Create(launchConfig.InfluxConfig.InfluxAddress,
+                                                          launchConfig.InfluxConfig.InfluxUsername,
+                                                          launchConfig.InfluxConfig.InfluxPassword.ToCharArray());
         }
 
         public PointData ConvertToInflux(Plant plant) {
@@ -24,15 +29,16 @@ namespace IoT_SmartPlant_Portal.Services {
             .Field("Temperature", plant.TemperatureC)
             .Field("Soil Humidity", plant.SoilHumidity)
             .Field("Humidity Level", plant.Humidity)
-
             .Timestamp(DateTime.UtcNow, WritePrecision.S);
 
             return point;
         }
 
         public void WritePoint(Plant plant) {
+            if (influxDBClient == null) {
+                ConnectInflux();
+            }
 
-            InfluxDBClient influxDBClient = InfluxDBClientFactory.Create(launchConfig.InfluxConfig.InfluxAddress, launchConfig.InfluxConfig.InfluxUsername, launchConfig.InfluxConfig.InfluxPassword.ToCharArray());
             PointData convertedMessage = ConvertToInflux(plant);
 
             using (var writeApi = influxDBClient.GetWriteApi()) {

@@ -6,8 +6,8 @@ namespace IoT_SmartPlant_Portal.Application.Configuration {
         public InfluxDBConfiguration InfluxConfig { get; set; }
 
         public LaunchConfiguration() {
-            MqttConfig = new MQTTBrokerConfiguration();
             InfluxConfig = new InfluxDBConfiguration();
+            MqttConfig = new MQTTBrokerConfiguration();
         }
     }
 
@@ -18,9 +18,9 @@ namespace IoT_SmartPlant_Portal.Application.Configuration {
         public string FlespiPassword { get; }
 
         public MQTTBrokerConfiguration() {
-            FlespiAddress = Environment.GetEnvironmentVariable("FLESPI_ADDRESS") ?? string.Empty;
+            FlespiAddress = Environment.GetEnvironmentVariable("FLESPI_ADDRESS");
             FlespiPort = Convert.ToInt32(Environment.GetEnvironmentVariable("FLESPI_PORT"));
-            FlespiUsername = Environment.GetEnvironmentVariable("FLESPI_USERNAME") ?? string.Empty;
+            FlespiUsername = Environment.GetEnvironmentVariable("FLESPI_USERNAME");
             FlespiPassword = Environment.GetEnvironmentVariable("FLESPI_PASSWORD") ?? string.Empty;
         }
     }
@@ -32,11 +32,13 @@ namespace IoT_SmartPlant_Portal.Application.Configuration {
         public string InfluxDatabase { get; }
 
         public InfluxDBConfiguration() {
-            InfluxAddress = Environment.GetEnvironmentVariable("INFLUX_ADDRESS") ?? string.Empty;
-            InfluxUsername = Environment.GetEnvironmentVariable("INFLUX_USERNAME") ?? string.Empty;
-            InfluxPassword = Environment.GetEnvironmentVariable("INFLUX_PASSWORD") ?? string.Empty;
-            InfluxDatabase = Environment.GetEnvironmentVariable("INFLUX_DATABASE") ?? string.Empty;
+            InfluxAddress = Environment.GetEnvironmentVariable("INFLUX_ADDRESS");
+            InfluxUsername = Environment.GetEnvironmentVariable("INFLUX_USERNAME");
+            InfluxPassword = Environment.GetEnvironmentVariable("INFLUX_PASSWORD");
+            InfluxDatabase = Environment.GetEnvironmentVariable("INFLUX_DATABASE");
         }
 
     }
+
+
 }
