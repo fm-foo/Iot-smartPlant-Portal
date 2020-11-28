@@ -63,8 +63,9 @@ namespace IoT_SmartPlant_Portal.Services {
         public void Subscribe(string topic) {
             try {
                 if (EnsureConnection()) {
-                    client.Subscribe(new string[] { topic }, new byte[] { MqttMsgBase.QOS_LEVEL_AT_LEAST_ONCE });
+                    client.MqttMsgPublishReceived += client_MqttMsgPublishReceived;
 
+                    client.Subscribe(new string[] { "ESP8266/sensor" }, new byte[] { MqttMsgBase.QOS_LEVEL_AT_LEAST_ONCE });
                     client.MqttMsgSubscribed += Client_MqttMsgSubscribed;
 
                     ushort msgId2 = client.Subscribe(new string[] { "ESP8266/sensor" },
@@ -78,14 +79,11 @@ namespace IoT_SmartPlant_Portal.Services {
         public void Publish(string topic, string messageBody) {
             try {
                 if (EnsureConnection()) {
-                    client.MqttMsgPublishReceived += client_MqttMsgPublishReceived;
-
                     ushort msgId = client.Publish(topic, // topic
                        Encoding.UTF8.GetBytes(messageBody), // message body
                        MqttMsgBase.QOS_LEVEL_EXACTLY_ONCE, // QoS level
                        true);
                 }
-
             } catch (Exception ex) {
                 throw ex;
             }
