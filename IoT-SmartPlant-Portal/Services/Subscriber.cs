@@ -1,4 +1,5 @@
-﻿using System;
+﻿using IoT_SmartPlant_Portal.Application.Configuration;
+using System;
 using System.Diagnostics;
 using System.Text;
 using uPLibrary.Networking.M2Mqtt;
@@ -7,15 +8,13 @@ using uPLibrary.Networking.M2Mqtt.Messages;
 namespace IoT_SmartPlant_Portal.Services {
     public class Subscriber {
         MqttClient client;
-        public Subscriber() {
-            InitialSetup();
+        public Subscriber(LaunchConfiguration launchConfig) {
+            EnsureConnection(launchConfig);
         }
 
-        private void InitialSetup() {
-            string BrokerAddress = "mqtt.flespi.io";
-
-            client = new MqttClient(BrokerAddress,
-                                    8883,
+        private void EnsureConnection(LaunchConfiguration launchConfig) {
+            client = new MqttClient(launchConfig.FlespiAddress,
+                                    launchConfig.FlespiPort,
                                     true,
                                     null,
                                     null,
