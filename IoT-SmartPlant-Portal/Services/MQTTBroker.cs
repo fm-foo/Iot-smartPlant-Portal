@@ -10,7 +10,6 @@ namespace IoT_SmartPlant_Portal.Services {
     public interface IMQTTBroker {
         void Subscribe(string topic);
         void Publish(string topic, string messageBody);
-
     }
 
 
@@ -25,24 +24,31 @@ namespace IoT_SmartPlant_Portal.Services {
         }
 
         private bool EnsureConnection() {
-            if (client != null) {
-                if (true) {
+            try {
+                if (client != null) {
+                    if (!client.IsConnected) {
+                        client.Connect(clientId,
+                                       launchConfig.FlespiUsername,
+                                       launchConfig.FlespiPassword);
+                    }
+                    return client.IsConnected;
+                } else {
+                    client = new MqttClient(launchConfig.FlespiAddress,
+                                       launchConfig.FlespiPort,
+                                       true,
+                                       null,
+                                       null,
+                                       MqttSslProtocols.TLSv1_1);
 
+                    clientId = Guid.NewGuid().ToString();
+                    client.Connect(clientId,
+                                   launchConfig.FlespiUsername,
+                                   launchConfig.FlespiPassword);
                 }
-            } else {
-                client = new MqttClient(launchConfig.FlespiAddress,
-                                   launchConfig.FlespiPort,
-                                   true,
-                                   null,
-                                   null,
-                                   MqttSslProtocols.TLSv1_1);
-
-                clientId = Guid.NewGuid().ToString();
-
-                client.Connect(clientId, launchConfig.FlespiUsername, launchConfig.FlespiPassword);
+                return client.IsConnected;
+            } catch (Exception ex) {
+                throw ex;
             }
-
-            return client.IsConnected;
         }
 
         public void Subscribe(string topic) {
@@ -60,15 +66,16 @@ namespace IoT_SmartPlant_Portal.Services {
             }
         }
 
-
         public void Publish(string topic, string messageBody) {
             try {
-                client.MqttMsgPublishReceived += client_MqttMsgPublishReceived;
+                if (EnsureConnection()) {
+                    client.MqttMsgPublishReceived += client_MqttMsgPublishReceived;
 
-                ushort msgId = client.Publish(topic, // topic
-                   Encoding.UTF8.GetBytes(messageBody), // message body
-                   MqttMsgBase.QOS_LEVEL_EXACTLY_ONCE, // QoS level
-                   true);
+                    ushort msgId = client.Publish(topic, // topic
+                       Encoding.UTF8.GetBytes(messageBody), // message body
+                       MqttMsgBase.QOS_LEVEL_EXACTLY_ONCE, // QoS level
+                       true);
+                }
             } catch (Exception ex) {
                 throw ex;
             }
