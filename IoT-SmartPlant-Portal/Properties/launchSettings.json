@@ -14,6 +14,10 @@
       "launchBrowser": true,
       "launchUrl": "plant",
       "environmentVariables": {
+        "FLESPI_ADDRESS": "mqtt.flespi.io",
+        "FLESPI_PORT": "8883",
+        "FLESPI_USERNAME": "FlespiToken pUgcWLHBBPPcrVYPwXB8tXC8L4fTZAFejJg5lLxKoaMFWyjglIeEvEB7wEOl4jpd",
+        "FLESPI_PASSWORD": "",
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
@@ -23,6 +27,10 @@
       "launchUrl": "plant",
       "applicationUrl": "https://localhost:5001;http://localhost:5000",
       "environmentVariables": {
+        "FLESPI_ADDRESS": "mqtt.flespi.io",
+        "FLESPI_PORT": "8883",
+        "FLESPI_USERNAME": "FlespiToken pUgcWLHBBPPcrVYPwXB8tXC8L4fTZAFejJg5lLxKoaMFWyjglIeEvEB7wEOl4jpd",
+        "FLESPI_PASSWORD": "",
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     }
