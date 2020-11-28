@@ -1,4 +1,5 @@
 ﻿using IoT_SmartPlant_Portal.Application.Configuration;
+using Newtonsoft.Json;
 using System;
 using System.Diagnostics;
 using System.Text;
@@ -10,7 +11,7 @@ namespace IoT_SmartPlant_Portal.Services {
     public interface IMQTTBroker {
         void Subscribe(string topic);
         void Publish(string topic, string messageBody);
-
+        MqttClient GetMQTTClient();
     }
 
 
@@ -18,6 +19,8 @@ namespace IoT_SmartPlant_Portal.Services {
         public MqttClient client;
         public LaunchConfiguration launchConfig;
         public string clientId;
+
+        static InfluxSubscriber _influx = new InfluxSubscriber("http://165.227.149.153:8086", "admin", "admin", "test");
 
         public MQTTBroker(LaunchConfiguration launchConfiguration) {
             launchConfig = launchConfiguration;
@@ -29,13 +32,13 @@ namespace IoT_SmartPlant_Portal.Services {
                 if (client != null) {
                     if (!client.IsConnected) {
                         client.Connect(clientId,
-                                       launchConfig.FlespiUsername,
-                                       launchConfig.FlespiPassword);
+                                       launchConfig.MqttConfig.FlespiUsername,
+                                       launchConfig.MqttConfig.FlespiPassword);
                     }
                     return client.IsConnected;
                 } else {
-                    client = new MqttClient(launchConfig.FlespiAddress,
-                                       launchConfig.FlespiPort,
+                    client = new MqttClient(launchConfig.MqttConfig.FlespiAddress,
+                                       launchConfig.MqttConfig.FlespiPort,
                                        true,
                                        null,
                                        null,
@@ -43,13 +46,17 @@ namespace IoT_SmartPlant_Portal.Services {
 
                     clientId = Guid.NewGuid().ToString();
                     client.Connect(clientId,
-                                   launchConfig.FlespiUsername,
-                                   launchConfig.FlespiPassword);
+                                   launchConfig.MqttConfig.FlespiUsername,
+                                   launchConfig.MqttConfig.FlespiPassword);
                 }
                 return client.IsConnected;
             } catch (Exception ex) {
                 throw ex;
             }
+        }
+
+        public MqttClient GetMQTTClient() {
+            return client;
         }
 
         public void Subscribe(string topic) {
@@ -86,6 +93,10 @@ namespace IoT_SmartPlant_Portal.Services {
         public static void client_MqttMsgPublishReceived(object sender, MqttMsgPublishEventArgs e) {
             // handle message received
             Console.WriteLine("message=" + Encoding.UTF8.GetString(e.Message));
+
+            string valuesFromBroker = Encoding.UTF8.GetString(e.Message);
+            Plant _plant = JsonConvert.DeserializeObject<Plant>(valuesFromBroker);
+            _influx.WritePoint(_plant);
         }
 
         public void client_MqttMsgSubscribed(object sender, MqttMsgSubscribedEventArgs e) {

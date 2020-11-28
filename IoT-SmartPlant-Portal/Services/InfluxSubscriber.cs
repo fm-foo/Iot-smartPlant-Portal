@@ -2,16 +2,10 @@
 using InfluxDB.Client.Api.Domain;
 using InfluxDB.Client.Writes;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace IoT_SmartPlant_Portal.Services
-{
-    public class InfluxSubscriber
-    {
-        public InfluxSubscriber(string HostName, string UserName, string Password, string DatabaseName)
-        {
+namespace IoT_SmartPlant_Portal.Services {
+    public class InfluxSubscriber {
+        public InfluxSubscriber(string HostName, string UserName, string Password, string DatabaseName) {
             this.HostName = HostName;
             this.UserName = UserName;
             this.Password = Password;
@@ -23,41 +17,23 @@ namespace IoT_SmartPlant_Portal.Services
         public string Password = "admin";
         public string DatabaseName = "test";
 
-        public PointData ConvertToInflux(Plant plant)
-        {
-            /*var point = new InfluxDatapoint<InfluxValueField>();
+        public PointData ConvertToInflux(Plant plant) {
+            var point = PointData.Measurement("Fern")
+            .Field("Temperature", plant.TemperatureC)
+            .Field("Soil Humidity", plant.SoilHumidity)
+            .Field("Humidity Level", plant.Humidity)
 
-            point.UtcTimestamp = DateTime.UtcNow;
-            point.MeasurementName = "Fern";
-            point.Fields.Add("Temperature", new InfluxValueField(plant.TemperatureC));
-            point.Fields.Add("Soil Humidity", new InfluxValueField(plant.SoilHumidity));
-            point.Fields.Add("Humidity Level", new InfluxValueField(plant.Humidity));
-            point.Precision = TimePrecision.Seconds;
+            .Timestamp(DateTime.UtcNow, WritePrecision.S);
 
-            using (var client = new AdysTech.InfluxDB.Client.Net.InfluxDBClient(HostName, UserName, Password))
-            {
-                    var r = await client.PostPointAsync(DatabaseName, point);
-                }*/
+            return point;
+        }
 
-                
-                    var point = PointData.Measurement("Fern")
-                    .Field("Temperature",  plant.TemperatureC)
-                    .Field("Soil Humidity", plant.SoilHumidity)
-                    .Field("Humidity Level", plant.Humidity)
-
-                    .Timestamp(DateTime.UtcNow, WritePrecision.S);
-
-                    return point;
-            }
-
-            public void WritePoint(Plant plant)
-        {
+        public void WritePoint(Plant plant) {
 
             InfluxDBClient influxDBClient = InfluxDBClientFactory.Create(HostName, UserName, Password.ToCharArray());
             PointData convertedMessage = ConvertToInflux(plant);
 
-            using (var writeApi = influxDBClient.GetWriteApi())
-            {
+            using (var writeApi = influxDBClient.GetWriteApi()) {
                 writeApi.WritePoint(DatabaseName, "org", convertedMessage);
                 //writeApi.WritePoint(convertedMessage);
             }
