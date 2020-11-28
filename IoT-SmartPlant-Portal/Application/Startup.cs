@@ -20,7 +20,7 @@ namespace IoT_SmartPlant_Portal.Application {
         public void ConfigureServices(IServiceCollection services) {
             services.AddControllers();
 
-            services.AddSingleton<Subscriber>();
+            services.AddSingleton<MQTTBroker>();
 
             services.AddSwaggerSetup();
         }

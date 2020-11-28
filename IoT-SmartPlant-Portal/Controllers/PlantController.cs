@@ -6,9 +6,9 @@ namespace IoT_SmartPlant_Portal.Controllers {
     [ApiController]
     public class PlantController : ControllerBase {
 
-        public Subscriber subscriber;
+        public MQTTBroker subscriber;
 
-        public PlantController(Subscriber subscriber) {
+        public PlantController(MQTTBroker subscriber) {
             subscriber = this.subscriber;
         }
 
