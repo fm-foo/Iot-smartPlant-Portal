@@ -5,11 +5,10 @@ namespace IoT_SmartPlant_Portal.Controllers {
     [Route("[controller]")]
     [ApiController]
     public class PlantController : ControllerBase {
+        public IMQTTBroker MQTTBroker;
 
-        public Subscriber subscriber;
-
-        public PlantController(Subscriber subscriber) {
-            subscriber = this.subscriber;
+        public PlantController(IMQTTBroker MQTT) {
+            MQTTBroker = MQTT;
         }
 
         [HttpGet]
