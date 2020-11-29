@@ -12,5 +12,7 @@ namespace IoT_SmartPlant_Portal.Models {
         [JsonProperty("temperature_c")]
         public float TemperatureC { get; set; }
 
+        [JsonProperty("device_id")]
+        public string DeviceId { get; set; }
     }
 }
