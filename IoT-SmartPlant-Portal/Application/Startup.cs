@@ -1,38 +1,94 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using API.Application.Builders;
 using IoT_SmartPlant_Portal.Application.Configuration;
+using IoT_SmartPlant_Portal.Configuration;
+using IoT_SmartPlant_Portal.Data;
 using IoT_SmartPlant_Portal.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 
-namespace IoT_SmartPlant_Portal.Application {
-    public class Startup {
+namespace IoT_SmartPlant_Portal
+{
+    public class Startup
+    {
+        public Startup(IConfiguration configuration)
+        {
+            Configuration = configuration;
+        }
+
         public IConfiguration Configuration { get; }
         private readonly LaunchConfiguration launchConfig;
 
-        public Startup(IConfiguration configuration) {
-            Configuration = configuration;
-            launchConfig = new LaunchConfiguration();
-        }
+        // This method gets called by the runtime. Use this method to add services to the container.
+        public void ConfigureServices(IServiceCollection services)
+        {
+            services.AddCors();
 
-        public void ConfigureServices(IServiceCollection services) {
             services.AddControllers();
 
             services.AddScoped<IMQTTBroker>(mqtt => new MQTTBroker(launchConfig));
 
             services.AddSwaggerSetup();
+            
+            services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(Configuration.GetConnectionString("SqlConnection")));
+
+            services.AddIdentity<IdentityUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
+                            .AddEntityFrameworkStores<ApplicationDbContext>();
+
+            // Configure strongly typed settings objects
+            var jwtSection = Configuration.GetSection("JwtBearerTokenSettings");
+            services.Configure<JwtBearerTokenSettings>(jwtSection);
+            var jwtBearerTokenSettings = jwtSection.Get<JwtBearerTokenSettings>();
+            var key = Encoding.ASCII.GetBytes(jwtBearerTokenSettings.SecretKey);
+
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+           .AddJwtBearer(options =>
+           {
+               options.RequireHttpsMetadata = false;
+               options.SaveToken = true;
+               options.TokenValidationParameters = new TokenValidationParameters()
+               {
+                   ValidIssuer = jwtBearerTokenSettings.Issuer,
+                   ValidAudience = jwtBearerTokenSettings.Audience,
+                   IssuerSigningKey = new SymmetricSecurityKey(key),
+               };
+           });
+
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env) {
-            if (env.IsDevelopment()) {
+        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        {
+
+            app.UseCors(x => x
+               .AllowAnyOrigin()
+               .AllowAnyMethod()
+               .AllowAnyHeader());
+
+            if (env.IsDevelopment())
+            {
                 app.UseDeveloperExceptionPage();
             }
 
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 
