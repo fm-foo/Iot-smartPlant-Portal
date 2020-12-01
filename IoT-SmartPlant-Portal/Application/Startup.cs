@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using IoT_SmartPlant_Portal.JwtAuth;
+using IoT_SmartPlant_Portal.Middleware;
 
 namespace IoT_SmartPlant_Portal.Application {
     public class Startup {
@@ -65,8 +66,12 @@ namespace IoT_SmartPlant_Portal.Application {
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env) {
+
+
+            app.UseMiddleware<ErrorMiddleware>();
+
             if (env.IsDevelopment()) {
-                app.UseDeveloperExceptionPage();
+                //app.UseDeveloperExceptionPage();
             }
 
             app.UseHttpsRedirection();
