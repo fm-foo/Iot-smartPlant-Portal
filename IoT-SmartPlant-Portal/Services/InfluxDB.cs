@@ -4,6 +4,7 @@ using InfluxDB.Client.Writes;
 using IoT_SmartPlant_Portal.Application.Configuration;
 using IoT_SmartPlant_Portal.Models;
 using System;
+using System.Threading.Tasks;
 
 namespace IoT_SmartPlant_Portal.Services {
     public class InfluxDB {
@@ -46,6 +47,22 @@ namespace IoT_SmartPlant_Portal.Services {
                 writeApi.WritePoint(launchConfig.InfluxConfig.InfluxDatabase, "org", convertedMessage);
             }
             influxDBClient.Dispose();
+        }
+
+        public async Task QueryInfluxAsync()
+        {
+            var influxClient = InfluxDBClientFactory.Create("http://165.227.149.153:8086");
+
+            var fluxQuery = "from(bucket: \"test\") |> range(start: -1d)";
+
+            var queryApi = influxClient.GetQueryApi();
+
+            await queryApi.QueryRawAsync(fluxQuery, "org", (cancellable, line) =>
+            {
+                Console.WriteLine($"Responce: {line}");
+            });
+
+            influxClient.Dispose();
         }
     }
 }
