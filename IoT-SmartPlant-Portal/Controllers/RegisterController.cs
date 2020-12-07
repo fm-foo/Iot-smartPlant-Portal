@@ -38,7 +38,7 @@ namespace IoT_SmartPlant_Portal.Controllers {
 
             var result = await _userManager.CreateUserAsync(appUser, model.Password);
 
-            if (!result) {
+            if (result) {
                 return Ok($"{model.Email} has been register succesfully");
             }
             return BadRequest("something has gone wrong check if email is correct");
