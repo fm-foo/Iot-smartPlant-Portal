@@ -19,14 +19,14 @@ namespace IoT_SmartPlant_Portal.Services {
     public class MQTTBroker : IMQTTBroker {
         public MqttClient client;
         public LaunchConfiguration launchConfig;
-        public static InfluxDB influxClient;
+        public static InfluxDBService influxClient;
         public string clientId;
 
 
         public MQTTBroker(LaunchConfiguration launchConfiguration) {
             launchConfig = launchConfiguration;
             Subscribe("ESP8266/sensor");
-            influxClient = new InfluxDB(launchConfiguration);
+            influxClient = new InfluxDBService(launchConfiguration);
         }
 
         private bool EnsureConnection() {

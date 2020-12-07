@@ -8,13 +8,13 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace IoT_SmartPlant_Portal.Services {
-    public class InfluxDB {
+    public class InfluxDBService {
 
         private LaunchConfiguration launchConfig;
         public InfluxDBClient influxDBClient { get; set; }
 
 
-        public InfluxDB(LaunchConfiguration launchConfiguration) {
+        public InfluxDBService(LaunchConfiguration launchConfiguration) {
             launchConfig = launchConfiguration;
             ConnectInflux();
 
