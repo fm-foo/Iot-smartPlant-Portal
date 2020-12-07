@@ -2,7 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 
-namespace API.Application.Builders {
+namespace IoT_SmartPlant_Portal.Application.Builders {
     public static class SwaggerBuilderSetup {
 
         /// <summary>
