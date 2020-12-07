@@ -4,6 +4,7 @@ using InfluxDB.Client.Writes;
 using IoT_SmartPlant_Portal.Application.Configuration;
 using IoT_SmartPlant_Portal.Models;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace IoT_SmartPlant_Portal.Services {
@@ -57,9 +58,36 @@ namespace IoT_SmartPlant_Portal.Services {
 
             var queryApi = influxClient.GetQueryApi();
 
+
+            //OPTION 1.
             await queryApi.QueryRawAsync(fluxQuery, "org", (cancellable, line) =>
             {
-                Console.WriteLine($"Responce: {line}");
+                Console.WriteLine($"Response: {line}");
+            });
+            
+            
+            // OPTION 2.
+            await queryApi.QueryAsync(fluxQuery, "org", (cancellable, record) =>
+            {
+                //
+                // The callback to consume a FluxRecord.
+                //
+                // cancelable - object has the cancel method to stop asynchronous query
+                //
+                Console.WriteLine($"{record.GetTime()}: {record.GetField()} {record.GetValueByKey("_value")}");
+            }, exception =>
+            {
+                //
+                // The callback to consume any error notification.
+                //
+
+                Console.WriteLine($"Error occurred: {exception.Message}");
+            }, () =>
+            {
+                //
+                // The callback to consume a notification about successfully end of stream.
+                //
+                Console.WriteLine("Query completed");
             });
 
             influxClient.Dispose();
