@@ -12,7 +12,7 @@ namespace IoT_SmartPlant_Portal.Services {
 
         private LaunchConfiguration launchConfig;
         public InfluxDBClient influxDBClient { get; set; }
-
+        public List<TestInluxModel> list = new List<TestInluxModel>();
 
         public InfluxDBService(LaunchConfiguration launchConfiguration) {
             launchConfig = launchConfiguration;
@@ -50,20 +50,37 @@ namespace IoT_SmartPlant_Portal.Services {
             influxDBClient.Dispose();
         }
 
-        public async Task QueryInfluxAsync() {
-            var fluxQuery = "from(bucket: \"test\") |> range(start: -1h)" + " |> sample(n: 5, pos: 1)";
+        public class TestInluxModel {
+            public DateTime TimeStamp { get; set; }
+            public string Field { get; set; }
+            public object Value { get; set; }
 
+            public TestInluxModel(DateTime timeStamp, string field, object value) {
+                TimeStamp = timeStamp;
+                Field = field;
+                Value = value;
+            }
+
+
+        }
+
+        public async Task<List<TestInluxModel>> QueryInfluxAsync() {
+            var fluxQuery = "from(bucket: \"test\")"
+                + " |> range(start: -5m)"
+                + " |> filter(fn: (r) => (r[\"Device ID\"] == \"87761e13-d509-4aa4-8dca-6e0915f6645b\"))";
 
             var queryApi = influxDBClient.GetQueryApi();
 
+            list.Clear();
 
-            // OPTION 2.
             await queryApi.QueryAsync(fluxQuery, "org", (cancellable, record) => {
                 //
                 // The callback to consume a FluxRecord.
                 //
                 // cancelable - object has the cancel method to stop asynchronous query
                 //
+                list.Add(new TestInluxModel(Convert.ToDateTime(record.GetTime().ToString()), record.GetField(), record.GetValueByKey("_value")));
+
                 Console.WriteLine($"{record.GetTime()}: {record.GetField()} {record.GetValueByKey("_value")}");
             }, exception => {
                 //
@@ -78,6 +95,8 @@ namespace IoT_SmartPlant_Portal.Services {
                 Console.WriteLine("Query completed");
             });
 
+
+            return list;
         }
     }
 }

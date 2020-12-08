@@ -14,7 +14,7 @@ namespace IoT_SmartPlant_Portal.Controllers {
 
         [HttpGet]
         public async Task<int> GetAsync() {
-            await MQTTBroker.GetInfluxClient().QueryInfluxAsync();
+            var test = await MQTTBroker.GetInfluxClient().QueryInfluxAsync();
             return 0;
         }
 
