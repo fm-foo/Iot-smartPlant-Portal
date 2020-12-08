@@ -50,47 +50,34 @@ namespace IoT_SmartPlant_Portal.Services {
             influxDBClient.Dispose();
         }
 
-        public async Task QueryInfluxAsync()
-        {
-            var influxClient = InfluxDBClientFactory.Create("http://165.227.149.153:8086");
-
-            var fluxQuery = "from(bucket: \"test\") |> range(start: -1d)";
-
-            var queryApi = influxClient.GetQueryApi();
+        public async Task QueryInfluxAsync() {
+            var fluxQuery = "from(bucket: \"test\") |> range(start: -1h)" + " |> sample(n: 5, pos: 1)";
 
 
-            //OPTION 1.
-            await queryApi.QueryRawAsync(fluxQuery, "org", (cancellable, line) =>
-            {
-                Console.WriteLine($"Response: {line}");
-            });
-            
-            
+            var queryApi = influxDBClient.GetQueryApi();
+
+
             // OPTION 2.
-            await queryApi.QueryAsync(fluxQuery, "org", (cancellable, record) =>
-            {
+            await queryApi.QueryAsync(fluxQuery, "org", (cancellable, record) => {
                 //
                 // The callback to consume a FluxRecord.
                 //
                 // cancelable - object has the cancel method to stop asynchronous query
                 //
                 Console.WriteLine($"{record.GetTime()}: {record.GetField()} {record.GetValueByKey("_value")}");
-            }, exception =>
-            {
+            }, exception => {
                 //
                 // The callback to consume any error notification.
                 //
 
                 Console.WriteLine($"Error occurred: {exception.Message}");
-            }, () =>
-            {
+            }, () => {
                 //
                 // The callback to consume a notification about successfully end of stream.
                 //
                 Console.WriteLine("Query completed");
             });
 
-            influxClient.Dispose();
         }
     }
 }

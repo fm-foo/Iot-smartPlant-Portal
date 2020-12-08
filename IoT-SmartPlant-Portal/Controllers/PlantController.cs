@@ -1,5 +1,6 @@
 ﻿using IoT_SmartPlant_Portal.Services;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace IoT_SmartPlant_Portal.Controllers {
     [Route("[controller]")]
@@ -12,7 +13,8 @@ namespace IoT_SmartPlant_Portal.Controllers {
         }
 
         [HttpGet]
-        public int Get() {
+        public async Task<int> GetAsync() {
+            await MQTTBroker.GetInfluxClient().QueryInfluxAsync();
             return 0;
         }
 

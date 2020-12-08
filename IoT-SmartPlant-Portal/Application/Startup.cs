@@ -61,7 +61,6 @@ namespace IoT_SmartPlant_Portal.Application {
             services.AddTransient<IMySqlService>(mySqlService => new MySqlService("server=207.154.226.178;user=user;password=eAT-Hqf_JwZCbnwY9AA*;database=users;Connection Timeout=30"));
 
             services.IdentityBuilder();
-
             services.AddSwaggerSetup();
         }
 
