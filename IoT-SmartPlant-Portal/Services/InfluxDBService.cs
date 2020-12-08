@@ -60,14 +60,10 @@ namespace IoT_SmartPlant_Portal.Services {
                 Field = field;
                 Value = value;
             }
-
-
         }
 
-        public async Task<List<TestInluxModel>> QueryInfluxAsync() {
-            var fluxQuery = "from(bucket: \"test\")"
-                + " |> range(start: -5m)"
-                + " |> filter(fn: (r) => (r[\"Device ID\"] == \"87761e13-d509-4aa4-8dca-6e0915f6645b\"))";
+        public async Task<List<TestInluxModel>> QueryInfluxAsync(string deviceID) {
+            var fluxQuery = $"from(bucket: \"test\") |> range(start: -5m) |> filter(fn: (r) => (r[\"Device ID\"] == \"{deviceID}\"))";
 
             var queryApi = influxDBClient.GetQueryApi();
 
