@@ -1,16 +1,16 @@
 ﻿using Newtonsoft.Json;
 
 namespace IoT_SmartPlant_Portal.Models {
-    public class Plant {
+    public class PlantData {
 
         [JsonProperty("soil_humidity")]
-        public float SoilHumidity { get; set; }
+        public double SoilHumidity { get; set; }
 
         [JsonProperty("humidity")]
-        public float Humidity { get; set; }
+        public double Humidity { get; set; }
 
         [JsonProperty("temperature_c")]
-        public float TemperatureC { get; set; }
+        public double TemperatureC { get; set; }
 
         [JsonProperty("device_id")]
         public string DeviceId { get; set; }

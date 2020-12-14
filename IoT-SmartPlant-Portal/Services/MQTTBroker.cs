@@ -96,7 +96,7 @@ namespace IoT_SmartPlant_Portal.Services {
             Console.WriteLine("message=" + Encoding.UTF8.GetString(e.Message));
 
             string valuesFromBroker = Encoding.UTF8.GetString(e.Message);
-            Plant _plant = JsonConvert.DeserializeObject<Plant>(valuesFromBroker);
+            PlantData _plant = JsonConvert.DeserializeObject<PlantData>(valuesFromBroker);
             influxClient.WritePoint(_plant);
         }
 

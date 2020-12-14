@@ -6,13 +6,14 @@ using IoT_SmartPlant_Portal.Models;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace IoT_SmartPlant_Portal.Services {
     public class InfluxDBService {
 
         private LaunchConfiguration launchConfig;
         public InfluxDBClient influxDBClient { get; set; }
-        public List<TestInluxModel> list = new List<TestInluxModel>();
+        public List<InfluxQuery> InfluxQueryData = new List<InfluxQuery>();
 
         public InfluxDBService(LaunchConfiguration launchConfiguration) {
             launchConfig = launchConfiguration;
@@ -26,7 +27,7 @@ namespace IoT_SmartPlant_Portal.Services {
                                                           launchConfig.InfluxConfig.InfluxPassword.ToCharArray());
         }
 
-        public PointData ConvertToInflux(Plant plant) {
+        public PointData ConvertToInflux(PlantData plant) {
             var point = PointData.Measurement("Fern")
             .Tag("Device ID", plant.DeviceId)
             .Field("Temperature", plant.TemperatureC)
@@ -37,7 +38,7 @@ namespace IoT_SmartPlant_Portal.Services {
             return point;
         }
 
-        public void WritePoint(Plant plant) {
+        public void WritePoint(PlantData plant) {
             if (influxDBClient == null) {
                 ConnectInflux();
             }
@@ -50,24 +51,12 @@ namespace IoT_SmartPlant_Portal.Services {
             influxDBClient.Dispose();
         }
 
-        public class TestInluxModel {
-            public DateTime TimeStamp { get; set; }
-            public string Field { get; set; }
-            public object Value { get; set; }
-
-            public TestInluxModel(DateTime timeStamp, string field, object value) {
-                TimeStamp = timeStamp;
-                Field = field;
-                Value = value;
-            }
-        }
-
-        public async Task<List<TestInluxModel>> QueryInfluxAsync(string deviceID) {
+        public async Task<List<InfluxQuery>> QueryInfluxAsync(string deviceID) {
             var fluxQuery = $"from(bucket: \"test\") |> range(start: -5m) |> filter(fn: (r) => (r[\"Device ID\"] == \"{deviceID}\"))";
 
             var queryApi = influxDBClient.GetQueryApi();
 
-            list.Clear();
+            InfluxQueryData.Clear();
 
             await queryApi.QueryAsync(fluxQuery, "org", (cancellable, record) => {
                 //
@@ -75,9 +64,8 @@ namespace IoT_SmartPlant_Portal.Services {
                 //
                 // cancelable - object has the cancel method to stop asynchronous query
                 //
-                list.Add(new TestInluxModel(Convert.ToDateTime(record.GetTime().ToString()), record.GetField(), record.GetValueByKey("_value")));
+                InfluxQueryData.Add(new InfluxQuery(record.GetTime(), record.GetField(), record.GetValueByKey("_value")));
 
-                Console.WriteLine($"{record.GetTime()}: {record.GetField()} {record.GetValueByKey("_value")}");
             }, exception => {
                 //
                 // The callback to consume any error notification.
@@ -92,7 +80,54 @@ namespace IoT_SmartPlant_Portal.Services {
             });
 
 
-            return list;
+            return InfluxQueryData;
         }
+
+        public List<PlantData> GetPlantDataFromQuery(string deviceId) {
+
+            List<PlantData> plantDataList = new List<PlantData>();
+
+            // order by timestamp, the list we obtain will be order in a way where every 3 in 3 values are 1 plant object
+            InfluxQueryData.OrderBy(x => x.TimeStamp);
+
+            for (int i = 0; i < InfluxQueryData.Count / 3; i++) {
+
+                int index = i * 3;
+
+                object soilHumidity = null;
+                object humidity = null;
+                object temperature = null;
+
+                for (int j = 0; j < 3; j++) {
+
+                    index += j;
+
+                    switch (InfluxQueryData[index].Field) {
+                        case "Soil Humidity":
+                            soilHumidity = InfluxQueryData[index].Value;
+                            break;
+                        case "Temperature":
+                            temperature = InfluxQueryData[index].Value;
+                            break;
+                        case "Humidity Level":
+                            humidity = InfluxQueryData[index].Value;
+                            break;
+                        default:
+                            break;
+                    }
+                }
+
+                PlantData plantdata = new PlantData {
+                    DeviceId = deviceId,
+                    SoilHumidity = Convert.ToDouble(soilHumidity),
+                    Humidity = Convert.ToDouble(humidity),
+                    TemperatureC = Convert.ToDouble(temperature)
+                };
+            }
+
+            return plantDataList;
+        }
+
+
     }
 }
