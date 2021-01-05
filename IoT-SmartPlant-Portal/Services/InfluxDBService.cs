@@ -88,9 +88,9 @@ namespace IoT_SmartPlant_Portal.Services {
             List<PlantData> plantDataList = new List<PlantData>();
 
             // order by timestamp, the list we obtain will be order in a way where every 3 in 3 values are 1 plant object
-            InfluxQueryData.OrderBy(x => x.TimeStamp);
+            var data = InfluxQueryData.OrderBy(x => x.TimeStamp).ToArray();
 
-            for (int i = 0; i < InfluxQueryData.Count / 3; i++) {
+            for (int i = 0; i < data.Length / 3; i++) {
 
                 int index = i * 3;
 
@@ -100,17 +100,18 @@ namespace IoT_SmartPlant_Portal.Services {
 
                 for (int j = 0; j < 3; j++) {
 
-                    index += j;
+                    int indexes = 0;
+                    indexes = index + j;
 
-                    switch (InfluxQueryData[index].Field) {
+                    switch (data[indexes].Field) {
                         case "Soil Humidity":
-                            soilHumidity = InfluxQueryData[index].Value;
+                            soilHumidity = data[indexes].Value;
                             break;
                         case "Temperature":
-                            temperature = InfluxQueryData[index].Value;
+                            temperature = data[indexes].Value;
                             break;
                         case "Humidity Level":
-                            humidity = InfluxQueryData[index].Value;
+                            humidity = data[indexes].Value;
                             break;
                         default:
                             break;
@@ -123,6 +124,8 @@ namespace IoT_SmartPlant_Portal.Services {
                     Humidity = Convert.ToDouble(humidity),
                     TemperatureC = Convert.ToDouble(temperature)
                 };
+
+                plantDataList.Add(plantdata);
             }
 
             return plantDataList;
