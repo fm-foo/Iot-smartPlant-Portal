@@ -14,9 +14,9 @@ namespace IoT_SmartPlant_Portal.Controllers {
             MQTTBroker = MQTT;
         }
 
-        [HttpGet("id")]
-        public async Task<int> GetAsync(string deviceID) {
-            deviceID = "87761e13-d509-4aa4-8dca-6e0915f6645b";
+        [HttpGet()]
+        public async Task<int> GetAsync() {
+            string deviceID = "87761e13-d509-4aa4-8dca-6e0915f6645b";
             var test = await MQTTBroker.GetInfluxClient().QueryInfluxAsync(deviceID);
             return 0;
         }
