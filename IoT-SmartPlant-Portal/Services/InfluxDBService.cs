@@ -117,20 +117,16 @@ namespace IoT_SmartPlant_Portal.Services {
                             break;
                     }
                 }
-
                 PlantData plantdata = new PlantData {
                     DeviceId = deviceId,
                     SoilHumidity = Convert.ToDouble(soilHumidity),
                     Humidity = Convert.ToDouble(humidity),
-                    TemperatureC = Convert.ToDouble(temperature)
+                    TemperatureC = Convert.ToDouble(temperature),
+                    TimeStamp = data[i].TimeStamp
                 };
-
                 plantDataList.Add(plantdata);
             }
-
             return plantDataList;
         }
-
-
     }
 }

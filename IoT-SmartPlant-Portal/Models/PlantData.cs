@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System;
 
 namespace IoT_SmartPlant_Portal.Models {
     public class PlantData {
@@ -14,5 +15,7 @@ namespace IoT_SmartPlant_Portal.Models {
 
         [JsonProperty("device_id")]
         public string DeviceId { get; set; }
+
+        public DateTime TimeStamp { get; set; }
     }
 }
