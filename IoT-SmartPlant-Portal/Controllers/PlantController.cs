@@ -31,10 +31,9 @@ namespace IoT_SmartPlant_Portal.Controllers {
             } else {
                 MQTTBroker.Publish("ESP8266/Pump", "OFF");
             }
-
         }
 
-        [HttpGet("QueryData")]
+        [HttpGet("{deviceID}")]
         public async Task<List<PlantData>> QueryData(string deviceID) {
             deviceID = "87761e13-d509-4aa4-8dca-6e0915f6645b";
             List<InfluxQuery> test = await MQTTBroker.GetInfluxClient().QueryInfluxAsync(deviceID);
@@ -44,7 +43,5 @@ namespace IoT_SmartPlant_Portal.Controllers {
             }
             return null;
         }
-
-
     }
 }
