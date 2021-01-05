@@ -1,11 +1,13 @@
 ﻿using IoT_SmartPlant_Portal.Models;
 using IoT_SmartPlant_Portal.Services;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace IoT_SmartPlant_Portal.Controllers {
     [Route("[controller]")]
+    [EnableCors("AllowAllHeaders")]
     [ApiController]
     public class PlantController : ControllerBase {
         public IMQTTBroker MQTTBroker;

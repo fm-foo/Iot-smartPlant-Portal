@@ -4,11 +4,13 @@ using System.Threading.Tasks;
 using IoT_SmartPlant_Portal.BindingModels;
 using IoT_SmartPlant_Portal.Identity.Managers;
 using IoT_SmartPlant_Portal.Identity.Models;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace IoT_SmartPlant_Portal.Controllers {
 
     [Route("[controller]")]
+    [EnableCors("AllowAllHeaders")]
     [ApiController]
     public class RegisterController : ControllerBase {
         private readonly MyUserManager<AppUser> _userManager;

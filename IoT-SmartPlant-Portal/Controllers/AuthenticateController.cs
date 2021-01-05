@@ -8,9 +8,12 @@ using IoT_SmartPlant_Portal.Identity.Managers;
 using IoT_SmartPlant_Portal.Identity.Models;
 using IoT_SmartPlant_Portal.BindingModels;
 using IoT_SmartPlant_Portal.JwtAuth;
+using Microsoft.AspNetCore.Cors;
 
 namespace IoT_SmartPlant_Portal.Controllers {
+
     [Route("[controller]")]
+    [EnableCors("AllowAllHeaders")]
     [ApiController]
     public class AuthenticateController : ControllerBase {
 
@@ -24,6 +27,7 @@ namespace IoT_SmartPlant_Portal.Controllers {
         /// <param name="jwtAuthService"></param>
         /// <param name="userManger"></param>
         /// <param name="signInManager"></param>
+
         public AuthenticateController(IJwtAuthService jwtAuthService, MyUserManager<AppUser> myUserManger, SignInManager<AppUser> signInManager) {
             _jwtAuthService = jwtAuthService;
             _myUserManager = myUserManger;
@@ -36,6 +40,7 @@ namespace IoT_SmartPlant_Portal.Controllers {
         /// <param name="model">user name and password from body</param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
+
         [AllowAnonymous]
         [HttpPost()]
         public async Task<IActionResult> AuthenticateAsync([FromBody] AuthenticatePostBindingModel model, CancellationToken cancellationToken) {
