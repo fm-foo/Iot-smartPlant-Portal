@@ -48,7 +48,7 @@ namespace IoT_SmartPlant_Portal.Services {
                                        true,
                                        null,
                                        null,
-                                       MqttSslProtocols.TLSv1_1);
+                                       MqttSslProtocols.None);
 
                     clientId = Guid.NewGuid().ToString();
                     client.Connect(clientId,
